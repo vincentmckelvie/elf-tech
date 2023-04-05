@@ -13,17 +13,27 @@ import { spline3 } from './extras/spline3.js';
 import { spline4 } from './extras/spline4.js';
 import { spline5 } from './extras/spline5.js';
 
+
 // import { RoomEnvironment } from './scripts/jsm/environments/RoomEnvironment.js';
 // import { TransformControls } from './scripts/jsm/controls/TransformControls.js';
 //import { TWEEN } from './scripts/jsm/libs/tween.module.min.js';
 
-let camera, scene, renderer, clock;
-let mesh, controls, tubeGeometry, splineCamera, splineAni1;
+let camera, scene, renderer, clock, ktx2Loader, controls, loader, mainModel;
+const splineAnis=[];
 
+const loadObjs=[
+    {loaded:false, group:null, url:"oracle.glb", isMainModel:true, name:"oracle", model:null},
+    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", model:null},
+    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", model:null},
+    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", model:null},
+    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", model:null},
+    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", model:null},
+
+]
 
 
 init();
-animate();
+//animate();
 
 function init() {
     
@@ -46,9 +56,6 @@ function init() {
 
     //const texture = new THREE.TextureLoader().load( 'textures/crate.gif' );
 
-
-    
-
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -64,7 +71,6 @@ function init() {
     controls.listenToKeyEvents( window ); // optional
 
     //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-
     controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     controls.dampingFactor = 0.1;
     controls.target.set(0,1,0);
@@ -76,27 +82,19 @@ function init() {
 
     //controls.maxPolarAngle = Math.PI / 2;
 
-    const ktx2Loader = new KTX2Loader()
+    ktx2Loader = new KTX2Loader()
         .setTranscoderPath( 'scripts/jsm/libs/basis/' )
         .detectSupport( renderer );
 
-    const loader = new GLTFLoader().setPath( './extras/' );
+    loader = new GLTFLoader().setPath( './extras/' );
     loader.setKTX2Loader( ktx2Loader );
     loader.setMeshoptDecoder( MeshoptDecoder );
-    loader.load( 'scene.glb', function ( gltf ) {
-
-        // coffeemat.glb was produced from the source scene using gltfpack:
-        // gltfpack -i coffeemat/scene.gltf -o coffeemat.glb -cc -tc
-        // The resulting model uses EXT_meshopt_compression (for geometry) and KHR_texture_basisu (for texture compression using ETC1S/BasisLZ)
-        console.log(gltf)
-        //gltf.scene.position.y = -1;
-
-        scene.add( gltf.scene );
-        
-    });
-
+    for(let i = 0; i<loadObjs.length; i++){
+        loadHelper(loadObjs[i]);    
+    }
+    
     //
-    splineAni1 = new SplineAnimation({scene:scene, spline:spline1});
+    
 
     clock = new THREE.Clock();
 
@@ -104,25 +102,99 @@ function init() {
 
 }
 
-function onWindowResize() {
+function loadHelper(OBJ){
+    
+    loader.load( OBJ.url, function ( gltf ) {
 
+        // coffeemat.glb was produced from the source scene using gltfpack:
+        // gltfpack -i coffeemat/scene.gltf -o coffeemat.glb -cc -tc
+        // The resulting model uses EXT_meshopt_compression (for geometry) and KHR_texture_basisu (for texture compression using ETC1S/BasisLZ)
+        //gltf.scene.position.y = -1;
+        
+        if(OBJ.isMainModel){
+            mainModel = gltf.scene;
+            scene.add( mainModel );
+            gltf.scene.traverse(function(obj){
+                if(obj.isMesh){
+                    obj.material.envMapIntensity = .2;
+                }
+            })
+        }else{
+
+            gltf.scene.traverse(function(obj){
+                if(obj.isMesh){
+                    const h1 = (-.1+Math.random()*.2)%1.0;
+                    const h2 = (-.1+Math.random()*.2)%1.0;
+                    obj.material.color = new THREE.Color().setHSL(h1*.2, 2.5, .5);
+                    obj.material.emissive = new THREE.Color().setHSL(h2*.2, 2.5, .5);
+                    obj.material.emissiveIntensity = 4;
+                    obj.material.envMapIntensity = 2.2;
+                    if(OBJ.name=="butterfly"){
+                        obj.material.transparent=true;
+                    }
+                }
+            })
+            
+        }
+
+        OBJ.loaded = true;
+        OBJ.model = gltf.scene;
+        OBJ.group = gltf;
+        //console.log(isAllLoaded())
+        if(isAllLoaded()){
+            initCurves()
+            animate();
+        }
+        
+    });
+}
+
+function getRandomDecorativeMesh(){
+    const arr = [];
+    for(let i = 0;i<loadObjs.length;i++){
+        if(!loadObjs[i].isMainModel)
+            arr.push(loadObjs[i]);
+    }
+    const index = Math.floor(Math.random()*arr.length);
+    return arr[index];
+}
+
+function initCurves(){
+    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline1, mesh:getRandomDecorativeMesh()} ) );
+    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline2, mesh:getRandomDecorativeMesh()} ) );
+    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline3, mesh:getRandomDecorativeMesh()} ) );
+    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline4, mesh:getRandomDecorativeMesh()} ) );
+    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline5, mesh:getRandomDecorativeMesh()} ) );
+    
+}
+
+function isAllLoaded(){
+    for(let i = 0; i<loadObjs.length; i++){
+        if(!loadObjs[i].loaded)
+            return false;
+    }
+    return true;
+}
+
+function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 function animate() {
 
     requestAnimationFrame( animate );
-
+    controls.update();
     // mesh.rotation.x += 0.005;
     // mesh.rotation.y += 0.01;
     const d = clock.getDelta();
     //const delta = d*globalAnimationSpeed*selectMult ;
-    splineAni1.update({delta:d});
+    for(let i = 0; i<splineAnis.length; i++){
+        splineAnis[i].update({delta:d});
 
+    }
+    
     //cameraHelper.update();
     //renderer.render( scene, params.animationView === true ? splineCamera : camera );
 

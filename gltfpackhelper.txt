@@ -1,1 +1,1 @@
-gltfpack -i scene.gltf -o scene.glb
+gltfpack -i hibiscus.gltf -o src/extras/hibiscus.glb
