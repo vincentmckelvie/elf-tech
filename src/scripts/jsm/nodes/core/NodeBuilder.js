@@ -7,7 +7,7 @@ import NodeKeywords from './NodeKeywords.js';
 import NodeCache from './NodeCache.js';
 import { NodeUpdateType, defaultBuildStages, shaderStages } from './constants.js';
 
-import { REVISION, LinearEncoding, Color, Vector2, Vector3, Vector4 } from 'three';
+import { REVISION, LinearEncoding, Color, Vector2, Vector3, Vector4 } from '../../../build/three.module.js';
 
 import { stack } from './StackNode.js';
 import { maxMipLevel } from '../utils/MaxMipLevelNode.js';

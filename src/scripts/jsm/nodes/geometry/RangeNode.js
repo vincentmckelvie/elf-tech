@@ -3,7 +3,7 @@ import { getValueType } from '../core/NodeUtils.js';
 import { attribute } from '../core/AttributeNode.js';
 import { nodeProxy, float } from '../shadernode/ShaderNode.js';
 
-import { MathUtils, InstancedBufferAttribute } from 'three';
+import { MathUtils, InstancedBufferAttribute } from '../../../build/three.module.js';
 
 class RangeNode extends Node {
 

@@ -11,7 +11,7 @@ import {
 	sRGBEncoding,
 	DataTexture,
 	REVISION,
-} from 'three';
+} from '../../../build/three.module.js';
 
 import {
 	write,

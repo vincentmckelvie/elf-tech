@@ -1,5 +1,5 @@
 {
-  "name": "geo.ink",
+  "name": "elf-tech",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -13,6 +13,7 @@
     "compression": "^1.7.4",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "gltfpack": "^0.18.0",
     "nodemon": "^2.0.15",
     "three": "^0.148.0"
   },

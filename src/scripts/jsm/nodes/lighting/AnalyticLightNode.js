@@ -3,7 +3,7 @@ import { NodeUpdateType } from '../core/constants.js';
 import { uniform } from '../core/UniformNode.js';
 import { addNodeClass } from '../core/Node.js';
 
-import { Color } from 'three';
+import { Color } from '../../../build/three.module.js';
 
 class AnalyticLightNode extends LightingNode {
 

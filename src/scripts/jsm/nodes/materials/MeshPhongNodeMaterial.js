@@ -4,7 +4,7 @@ import { materialShininess, materialSpecularColor } from '../accessors/MaterialN
 import phongLightingModel from '../functions/PhongLightingModel.js';
 import { float } from '../shadernode/ShaderNode.js';
 
-import { MeshPhongMaterial } from 'three';
+import { MeshPhongMaterial } from '../../../build/three.module.js';
 
 const defaultValues = new MeshPhongMaterial();
 

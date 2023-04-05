@@ -3,7 +3,7 @@ import { mix } from '../math/MathNode.js';
 import { addNodeClass } from '../core/Node.js';
 import { addNodeElement, ShaderNode, nodeObject, vec4 } from '../shadernode/ShaderNode.js';
 
-import { LinearEncoding, sRGBEncoding } from 'three';
+import { LinearEncoding, sRGBEncoding } from '../../../build/three.module.js';
 
 export const LinearToLinear = new ShaderNode( ( inputs ) => {
 
