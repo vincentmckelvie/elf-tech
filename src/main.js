@@ -13,24 +13,47 @@ import { spline3 } from './extras/spline3.js';
 import { spline4 } from './extras/spline4.js';
 import { spline5 } from './extras/spline5.js';
 
+import { splineWhite1 } from './extras/splineWhite1.js';
+import { splineWhite2 } from './extras/splineWhite2.js';
+import { splineWhite3 } from './extras/splineWhite3.js';
+import { splineWhite4 } from './extras/splineWhite4.js';
+import { splineWhite5 } from './extras/splineWhite5.js';
+import { splineWhite6 } from './extras/splineWhite6.js';
+
 
 // import { RoomEnvironment } from './scripts/jsm/environments/RoomEnvironment.js';
 // import { TransformControls } from './scripts/jsm/controls/TransformControls.js';
 //import { TWEEN } from './scripts/jsm/libs/tween.module.min.js';
 
 let camera, scene, renderer, clock, ktx2Loader, controls, loader, mainModel;
+const oracleCurves = [spline1, spline2, spline3, spline4, spline5];
+const whiteCurves = [splineWhite1, splineWhite2, splineWhite3, splineWhite4, splineWhite5, splineWhite6];
 const splineAnis=[];
 
-const loadObjs=[
-    {loaded:false, group:null, url:"oracle.glb", isMainModel:true, name:"oracle", model:null},
+const oracle = [
+    {loaded:false, group:null, url:"oracle-2.glb", isMainModel:true, name:"oracle", model:null},
     {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", model:null},
     {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", model:null},
     {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", model:null},
     {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", model:null},
     {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", model:null},
-
 ]
 
+const white = [
+    {loaded:false, group:null, url:"white-fairy.glb", isMainModel:true, name:"white-fairy", model:null},
+    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", model:null},
+    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", model:null},
+    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", model:null},
+    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", model:null},
+    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", model:null},
+]
+
+const loadsArr = [oracle, white];
+const curvesArr = [oracleCurves, whiteCurves]
+
+const fairyIndex = Math.floor(Math.random()*loadsArr.length);
+const loadObjs = loadsArr[fairyIndex];
+const curves = curvesArr[fairyIndex];
 
 init();
 //animate();
@@ -123,12 +146,27 @@ function loadHelper(OBJ){
 
             gltf.scene.traverse(function(obj){
                 if(obj.isMesh){
-                    const h1 = (-.1+Math.random()*.2)%1.0;
-                    const h2 = (-.1+Math.random()*.2)%1.0;
-                    obj.material.color = new THREE.Color().setHSL(h1*.2, 2.5, .5);
-                    obj.material.emissive = new THREE.Color().setHSL(h2*.2, 2.5, .5);
+
+                    let h1; //= (-.1+Math.random()*.2)%1.0;
+                    let h2; //= (-.1+Math.random()*.2)%1.0;
+                    let sat;
+                    switch(fairyIndex){
+                        case 0:  
+                            h1 = (-.1+Math.random()*.2)%1.0;
+                            h2 = (-.1+Math.random()*.2)%1.0;
+                            sat = 2.5;
+                        break;
+                        case 1:  
+                            h1 = (-.1+Math.random()*.2)%1.0;
+                            h2 = (-.1+Math.random()*.2)%1.0;
+                            sat = .2
+                        break;
+                    }
+                    obj.material.color = new THREE.Color().setHSL(h1*.2, sat, .5);
+                    obj.material.emissive = new THREE.Color().setHSL(h2*.2, sat, .5);
                     obj.material.emissiveIntensity = 4;
                     obj.material.envMapIntensity = 2.2;
+                    
                     if(OBJ.name=="butterfly"){
                         obj.material.transparent=true;
                     }
@@ -160,12 +198,9 @@ function getRandomDecorativeMesh(){
 }
 
 function initCurves(){
-    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline1, mesh:getRandomDecorativeMesh()} ) );
-    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline2, mesh:getRandomDecorativeMesh()} ) );
-    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline3, mesh:getRandomDecorativeMesh()} ) );
-    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline4, mesh:getRandomDecorativeMesh()} ) );
-    splineAnis.push( new SplineAnimation( {scene:scene, spline:spline5, mesh:getRandomDecorativeMesh()} ) );
-    
+    for(let i = 0; i<curves.length; i++){
+        splineAnis.push( new SplineAnimation( {scene:scene, spline:curves[i], mesh:getRandomDecorativeMesh()} ) );
+    }
 }
 
 function isAllLoaded(){
