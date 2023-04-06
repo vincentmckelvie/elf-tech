@@ -21,6 +21,13 @@ import { splineWhite5 } from './extras/splineWhite5.js';
 import { splineWhite6 } from './extras/splineWhite6.js';
 
 
+
+import { splineNormal1 } from './extras/splineNormal1.js';
+import { splineNormal2 } from './extras/splineNormal2.js';
+import { splineNormal3 } from './extras/splineNormal3.js';
+import { splineNormal4 } from './extras/splineNormal4.js';
+import { splineNormal5 } from './extras/splineNormal5.js';
+import { splineNormal6 } from './extras/splineNormal6.js';
 // import { RoomEnvironment } from './scripts/jsm/environments/RoomEnvironment.js';
 // import { TransformControls } from './scripts/jsm/controls/TransformControls.js';
 //import { TWEEN } from './scripts/jsm/libs/tween.module.min.js';
@@ -28,32 +35,49 @@ import { splineWhite6 } from './extras/splineWhite6.js';
 let camera, scene, renderer, clock, ktx2Loader, controls, loader, mainModel;
 const oracleCurves = [spline1, spline2, spline3, spline4, spline5];
 const whiteCurves = [splineWhite1, splineWhite2, splineWhite3, splineWhite4, splineWhite5, splineWhite6];
+const normalCurves = [splineNormal1, splineNormal2, splineNormal3, splineNormal4, splineNormal5, splineNormal6];
+
 const splineAnis=[];
 
-const oracle = [
-    {loaded:false, group:null, url:"oracle-2.glb", isMainModel:true, name:"oracle", model:null},
-    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", model:null},
-    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", model:null},
-    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", model:null},
-    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", model:null},
-    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", model:null},
+const oracleLoadObjects = [
+    {loaded:false, group:null, url:"oracle-2.glb", isMainModel:true, name:"oracle", animated:false, model:null},
+    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", animated:false, model:null},
+    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", animated:false, model:null},
+    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", animated:true, model:null},
+]
+const whiteLoadObjects = [
+    {loaded:false, group:null, url:"white-fairy.glb", isMainModel:true, name:"white-fairy", animated:false, model:null},
+    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", animated:false, model:null},
+    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", animated:false, model:null},
+    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", animated:true, model:null},
 ]
 
-const white = [
-    {loaded:false, group:null, url:"white-fairy.glb", isMainModel:true, name:"white-fairy", model:null},
-    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", model:null},
-    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", model:null},
-    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", model:null},
-    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", model:null},
-    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", model:null},
+const normalLoadObjects = [
+    {loaded:false, group:null, url:"normal-fairy.glb", isMainModel:true, name:"normal-fairy", animated:false, model:null},
+    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", animated:false, model:null},
+    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", animated:false, model:null},
+    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", animated:true, model:null},
 ]
 
-const loadsArr = [oracle, white];
-const curvesArr = [oracleCurves, whiteCurves]
+const fairyObjects = [
+    {name:"oracle", load:oracleLoadObjects, curves:oracleCurves},
+    {name:"white fairy",load:whiteLoadObjects, curves:whiteCurves},
+    {name:"normal fairy",load:normalLoadObjects, curves:normalCurves},
+]
 
-const fairyIndex = Math.floor(Math.random()*loadsArr.length);
-const loadObjs = loadsArr[fairyIndex];
-const curves = curvesArr[fairyIndex];
+//const loadsArr = [oracle, white];
+//const curvesArr = [oracleCurves, whiteCurves]
+
+const fairyIndex = Math.floor(Math.random()*fairyObjects.length);
+
+const loadObjs = fairyObjects[fairyIndex].load;
+const curves = fairyObjects[fairyIndex].curves;
 
 init();
 //animate();
@@ -116,9 +140,6 @@ function init() {
         loadHelper(loadObjs[i]);    
     }
     
-    //
-    
-
     clock = new THREE.Clock();
 
     window.addEventListener( 'resize', onWindowResize );
@@ -150,6 +171,7 @@ function loadHelper(OBJ){
                     let h1; //= (-.1+Math.random()*.2)%1.0;
                     let h2; //= (-.1+Math.random()*.2)%1.0;
                     let sat;
+                    let brt = .5;
                     switch(fairyIndex){
                         case 0:  
                             h1 = (-.1+Math.random()*.2)%1.0;
@@ -161,9 +183,16 @@ function loadHelper(OBJ){
                             h2 = (-.1+Math.random()*.2)%1.0;
                             sat = .2
                         break;
+
+                        case 2:  
+                            h1 = (.2+Math.random()*.2)%1.0;
+                            h2 = (.2+Math.random()*.2)%1.0;
+                            sat = .7;
+                            brt = .7;
+                        break;
                     }
-                    obj.material.color = new THREE.Color().setHSL(h1*.2, sat, .5);
-                    obj.material.emissive = new THREE.Color().setHSL(h2*.2, sat, .5);
+                    obj.material.color = new THREE.Color().setHSL(h1, sat, brt);
+                    obj.material.emissive = new THREE.Color().setHSL(h2, sat, brt);
                     obj.material.emissiveIntensity = 4;
                     obj.material.envMapIntensity = 2.2;
                     

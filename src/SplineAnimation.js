@@ -29,16 +29,15 @@ class SplineAnimation {
         this.position = new Vector3();
         this.lookAt = new Vector3();
         
-        
         // const geometry = new BoxGeometry( .1, .1, .1 );
         // const material = new MeshStandardMaterial( { } );
         this.mixers=[];
         this.meshes = [];
-        this.isButterfly = false;
+        this.ignoreRotation = false;
         this.sMult = (.8+Math.random()*.4)*.2;
         
         if(OBJ.mesh.name == "butterfly"){
-            this.isButterfly = true;
+            this.ignoreRotation = true;
             this.sMult *= .2;
         }
          
@@ -47,7 +46,7 @@ class SplineAnimation {
             //const m = new Mesh( geometry, material );
             //console.log(OBJ.mesh)
             let m;
-            if(OBJ.mesh.name != "butterfly"){
+            if(!OBJ.mesh.animated){
                 m = OBJ.mesh.model.clone();
             }else{
                 m = clone( OBJ.mesh.model );
@@ -75,6 +74,7 @@ class SplineAnimation {
    
 
     update(OBJ){
+
         for(let i = 0; i<this.mixers.length; i++){
             this.mixers[i].mixer.update(OBJ.delta*this.mixers[i].speed);
         }
@@ -134,11 +134,10 @@ class SplineAnimation {
             this.meshes[i].matrix.lookAt( this.meshes[i].position, this.lookAt, this.normal );
             this.meshes[i].quaternion.setFromRotationMatrix( this.meshes[i].matrix );//.setFromAxisAngle(new Vector3(0,1,0),rotAngle );
             
-            if(!this.isButterfly){
+            if(!this.ignoreRotation){
                 this.meshes[i].rotation.x=rotAngle;
-            }else{
-
             }
+            
             let s = (.5 + Math.sin( -Math.PI/2 + ( t * (Math.PI*2)) ) * .5) * (this.sMult*3);
             if(s>this.sMult)s=this.sMult;
             this.meshes[i].scale.set(s,s,s)
