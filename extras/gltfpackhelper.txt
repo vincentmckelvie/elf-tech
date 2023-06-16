@@ -1,1 +1,1 @@
-gltfpack -i hibiscus.gltf -o src/extras/hibiscus.glb
+gltfpack -i gltfs/piano-fairy-2.gltf -o src/extras/piano-fairy.glb

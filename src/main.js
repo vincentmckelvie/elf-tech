@@ -20,14 +20,18 @@ import { splineWhite4 } from './extras/splineWhite4.js';
 import { splineWhite5 } from './extras/splineWhite5.js';
 import { splineWhite6 } from './extras/splineWhite6.js';
 
-
-
 import { splineNormal1 } from './extras/splineNormal1.js';
 import { splineNormal2 } from './extras/splineNormal2.js';
 import { splineNormal3 } from './extras/splineNormal3.js';
 import { splineNormal4 } from './extras/splineNormal4.js';
 import { splineNormal5 } from './extras/splineNormal5.js';
 import { splineNormal6 } from './extras/splineNormal6.js';
+
+import { splinePiano0 } from './extras/pianoSpline0.js';
+import { splinePiano1 } from './extras/pianoSpline1.js';
+import { splinePiano2 } from './extras/pianoSpline2.js';
+import { splinePiano3 } from './extras/pianoSpline3.js';
+import { splinePiano4 } from './extras/pianoSpline4.js';
 // import { RoomEnvironment } from './scripts/jsm/environments/RoomEnvironment.js';
 // import { TransformControls } from './scripts/jsm/controls/TransformControls.js';
 //import { TWEEN } from './scripts/jsm/libs/tween.module.min.js';
@@ -36,6 +40,7 @@ let camera, scene, renderer, clock, ktx2Loader, controls, loader, mainModel;
 const oracleCurves = [spline1, spline2, spline3, spline4, spline5];
 const whiteCurves = [splineWhite1, splineWhite2, splineWhite3, splineWhite4, splineWhite5, splineWhite6];
 const normalCurves = [splineNormal1, splineNormal2, splineNormal3, splineNormal4, splineNormal5, splineNormal6];
+const pianoCurves = [splinePiano0, splinePiano1, splinePiano2, splinePiano3, splinePiano4];
 
 const splineAnis=[];
 
@@ -65,24 +70,61 @@ const normalLoadObjects = [
     {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", animated:true, model:null},
 ]
 
+const pianoLoadObjects = [
+    {loaded:false, group:null, url:"piano-fairy.glb", isMainModel:true, name:"piano-fairy", animated:false, model:null},
+    {loaded:false, group:null, url:"orchid.glb", isMainModel:false, name:"orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"hibiscus.glb", isMainModel:false, name:"hibiscus", animated:false, model:null},
+    {loaded:false, group:null, url:"siam.glb", isMainModel:false, name:"siam", animated:false, model:null},
+    {loaded:false, group:null, url:"moth-orchid.glb", isMainModel:false, name:"moth orchid", animated:false, model:null},
+    {loaded:false, group:null, url:"butterfly.glb", isMainModel:false, name:"butterfly", animated:true, model:null},
+]
+
 const fairyObjects = [
     {name:"oracle", load:oracleLoadObjects, curves:oracleCurves},
     {name:"white fairy",load:whiteLoadObjects, curves:whiteCurves},
     {name:"normal fairy",load:normalLoadObjects, curves:normalCurves},
+    {name:"piano fairy",load:pianoLoadObjects, curves:pianoCurves},
 ]
 
 //const loadsArr = [oracle, white];
 //const curvesArr = [oracleCurves, whiteCurves]
+let fairyIndex = 0;
+let loadObjs;// = fairyObjects[fairyIndex].load;
+let curves;// = fairyObjects[fairyIndex].curves;
 
-const fairyIndex = Math.floor(Math.random()*fairyObjects.length);
+const fairyNames = [
+    "White Wing Fairie",
+    "Chrome Wing Farie",
+    "Oracle",
+    "Cyborg"
+]
 
-const loadObjs = fairyObjects[fairyIndex].load;
-const curves = fairyObjects[fairyIndex].curves;
+function getFairyIndex(name){
+    for(let i = 0; i<fairyNames.length; i++){
+        if(name == fairyNames[i])
+            return i;
+    }
+    return 0;
+} 
 
-init();
-//animate();
+fetch('./test0.json')
+    .then((response) => response.json())
+    .then((json) => init(json));
 
-function init() {
+//init();
+
+
+
+
+function init(json) {
+
+    fairyIndex = getFairyIndex(json.attributes[0].value);
+    //console.log(fairyIndex)
+    
+    
+    //fairyIndex = 3;// Math.floor(Math.random()*fairyObjects.length);
+    loadObjs = fairyObjects[fairyIndex].load;
+    curves = fairyObjects[fairyIndex].curves;
     
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 200 );
     camera.position.z = 2;
@@ -162,6 +204,7 @@ function loadHelper(OBJ){
                 if(obj.isMesh){
                     obj.material.envMapIntensity = .2;
                 }
+                if()
             })
         }else{
 
@@ -183,12 +226,16 @@ function loadHelper(OBJ){
                             h2 = (-.1+Math.random()*.2)%1.0;
                             sat = .2
                         break;
-
                         case 2:  
                             h1 = (.2+Math.random()*.2)%1.0;
                             h2 = (.2+Math.random()*.2)%1.0;
                             sat = .7;
                             brt = .7;
+                        break;
+                        case 3:  
+                            h1 = (.8+Math.random()*.2)%1.0;
+                            h2 = (.8+Math.random()*.2)%1.0;
+                            sat = 2.5;
                         break;
                     }
                     obj.material.color = new THREE.Color().setHSL(h1, sat, brt);

@@ -1,0 +1,32 @@
+{
+  "description": "Elf Tech NFT", 
+  "external_url": "zora.com", 
+  "name": "Elf Tech NFT #0",
+  "attributes": [
+    {
+      "trait_type": "Fairy", 
+      "value": "White Wing Fairie"
+    },{
+      "trait_type": "Path", 
+      "value": "0"
+    },{
+      "trait_type": "Path Object", 
+      "value": "Butterfly"
+    },{
+      "trait_type": "Armor", 
+      "value": "Chrome"
+    },{
+      "trait_type": "Tattoo Color", 
+      "value": "#ff0000"
+    },{
+      "trait_type": "Environment", 
+      "value": "City"
+    },{
+      "trait_type": "Warp", 
+      "value": ".4"
+    },{
+      "trait_type": "Eye Color", 
+      "value": "#00ff00"
+    } 
+   ]
+}
